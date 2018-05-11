@@ -21,6 +21,8 @@ class Server:
             buf = connection.recv(1024).decode()
             if buf == '1':
                 # start a thread for new connection
+                nickname = connection.recv(1024).decode()
+                print(connection.fileno(), '=', nickname)
                 mythread = threading.Thread(target=self.subThreadIn, args=(connection, connection.fileno()))
                 mythread.setDaemon(True)
                 mythread.start()
