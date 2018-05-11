@@ -7,12 +7,13 @@ class Client:
         self.sock = sock
         self.sock.connect((host, port))
         self.sock.send(b'1')
-        #
+
+        #顯示歡迎訊息 向server傳nickname
         print('Welcome to chat room! ')
         nickname = input('Input your nickname : ')
         self.sock.send(nickname.encode())
         print("Now Lets Chat, ",nickname)
-        #
+
     def sendThreadFunc(self):
         while True:
             try:

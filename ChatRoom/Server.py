@@ -5,6 +5,10 @@ from time import gmtime, strftime
 
 
 class Server:
+
+    #{ id : name }
+    UserId_Name = dict()
+
     def __init__(self, host, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock = sock
@@ -21,8 +25,13 @@ class Server:
             buf = connection.recv(1024).decode()
             if buf == '1':
                 # start a thread for new connection
+
+                #紀錄使用者名稱
                 nickname = connection.recv(1024).decode()
                 print(connection.fileno(), '=', nickname)
+
+                self.UserId_Name[connection.fileno()] = nickname
+
                 mythread = threading.Thread(target=self.subThreadIn, args=(connection, connection.fileno()))
                 mythread.setDaemon(True)
                 mythread.start()
@@ -38,9 +47,11 @@ class Server:
         for c in self.mylist:
             if c.fileno() != exceptNum:
                 try:
+                    #server時間
                     send_time = strftime("[%H:%M:%S]", gmtime())
-                    whatToSay = whatToSay + send_time
-                    c.send(whatToSay.encode())
+                    #名字 + 訊息 + 時間
+                    fullMessage = self.UserId_Name[exceptNum] + ': ' + whatToSay + '\t' + send_time
+                    c.send(fullMessage.encode())
                 except:
                     pass
 
