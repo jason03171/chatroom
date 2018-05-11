@@ -61,7 +61,7 @@ class Server:
 
 
 def main():
-    s = Server('localhost', 5550)
+    s = Server('140.138.145.57', 5550)
     while True:
         s.checkConnection()
 
