@@ -32,6 +32,9 @@ class Server:
 
                 self.UserId_Name[connection.fileno()] = nickname
 
+                # 歡迎新使用者進入
+                self.welcome(connection.fileno())
+
                 mythread = threading.Thread(target=self.subThreadIn, args=(connection, connection.fileno()))
                 mythread.setDaemon(True)
                 mythread.start()
@@ -41,6 +44,17 @@ class Server:
                 connection.close()
         except:
             pass
+
+    # 歡迎新使用者進入
+    def welcome(self, exceptNum):
+        for c in self.mylist:
+            if c.fileno() != exceptNum:
+                try:
+                    #名字 + 訊息
+                    fullMessage = "SYSTEM: " + self.UserId_Name[exceptNum] + " in the chat room"
+                    c.send(fullMessage.encode())
+                except:
+                    pass
 
     # send whatToSay to every except people in exceptNum
     def tellOthers(self, exceptNum, whatToSay):
@@ -84,7 +98,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 
 
