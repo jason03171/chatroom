@@ -38,6 +38,8 @@ class Server:
         for c in self.mylist:
             if c.fileno() != exceptNum:
                 try:
+                    send_time = strftime("[%H:%M:%S]", gmtime())
+                    whatToSay = whatToSay + send_time
                     c.send(whatToSay.encode())
                 except:
                     pass
@@ -58,12 +60,12 @@ class Server:
                 except:
                     pass
 
-                
                 myconnection.close()
                 return
 
 
 def main():
+    #140.138.145.57
     s = Server('140.138.145.57', 5550)
     while True:
         s.checkConnection()
@@ -71,4 +73,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
 
