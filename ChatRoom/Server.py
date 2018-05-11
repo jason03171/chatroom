@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 import socket
 import threading
+import datetime
 from time import gmtime, strftime
 
 
@@ -62,7 +63,7 @@ class Server:
             if c.fileno() != exceptNum:
                 try:
                     #server時間
-                    send_time = strftime("[%H:%M:%S]", gmtime())
+                    send_time = datetime.datetime.now().strftime("[%H:%M:%S]")
                     #名字 + 訊息 + 時間
                     fullMessage = self.UserId_Name[exceptNum] + ': ' + whatToSay + '\t' + send_time
                     c.send(fullMessage.encode())
@@ -98,5 +99,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
