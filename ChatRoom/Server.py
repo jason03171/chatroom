@@ -58,6 +58,7 @@ class Server:
                 except:
                     pass
 
+                
                 myconnection.close()
                 return
 
