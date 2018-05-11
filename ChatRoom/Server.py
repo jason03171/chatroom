@@ -35,6 +35,7 @@ class Server:
 
                 # 歡迎新使用者進入
                 self.welcome(connection.fileno())
+                self.showCount()
 
                 mythread = threading.Thread(target=self.subThreadIn, args=(connection, connection.fileno()))
                 mythread.setDaemon(True)
@@ -46,6 +47,15 @@ class Server:
         except:
             pass
 
+
+    def showCount(self):
+        for c in self.mylist:
+            try:
+                fullMessage = "SYSTEM: Online User count = {}".format(len(self.UserId_Name))
+                c.send(fullMessage.encode())
+            except:
+                pass
+
     # 歡迎新使用者進入
     def welcome(self, exceptNum):
         for c in self.mylist:
@@ -56,6 +66,13 @@ class Server:
                     c.send(fullMessage.encode())
                 except:
                     pass
+
+    def tellAll(self, whatToSay):
+        for c in self.mylist:
+            try:
+                c.send(whatToSay.encode())
+            except:
+                pass
 
     # send whatToSay to every except people in exceptNum
     def tellOthers(self, exceptNum, whatToSay):
@@ -83,6 +100,11 @@ class Server:
             except (OSError, ConnectionResetError):
                 try:
                     self.mylist.remove(myconnection)
+                    msg = "User " + self.UserId_Name[connNumber] + ' leave'
+                    self.tellAll(msg)
+
+                    del self.UserId_Name[connNumber]
+                    self.showCount()
                 except:
                     pass
 
@@ -92,7 +114,7 @@ class Server:
 
 def main():
     #140.138.145.57
-    s = Server('140.138.145.57', 5550)
+    s = Server('140.138.145.56', 5550)
     while True:
         s.checkConnection()
 
