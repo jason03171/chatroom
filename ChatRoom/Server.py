@@ -7,7 +7,7 @@ from time import gmtime, strftime
 
 class Server:
 
-    #{ id : name }
+    #紀錄登入的使用者id和nickname { id : nickname }
     UserId_Name = dict()
 
     def __init__(self, host, port):
@@ -102,6 +102,7 @@ class Server:
                     self.mylist.remove(myconnection)
                     msg = "User " + self.UserId_Name[connNumber] + ' leave'
                     self.tellAll(msg)
+                    print('Disconnected name:{} id:{}'.format(self.UserId_Name[connNumber], connNumber))
 
                     del self.UserId_Name[connNumber]
                     self.showCount()
@@ -113,8 +114,7 @@ class Server:
 
 
 def main():
-    #140.138.145.57
-    s = Server('140.138.145.56', 5550)
+    s = Server('localhost', 5550)
     while True:
         s.checkConnection()
 
