@@ -1,5 +1,8 @@
 import socket
 import threading
+from PyQt5.QtWidgets import QMainWindow, QApplication
+import mainwindow
+import sys
 
 class Client:
     def __init__(self, host, port):
@@ -35,6 +38,11 @@ class Client:
             except ConnectionResetError:
                 print('Server is closed!')
 
+class Qt_Window_Main(QMainWindow,mainwindow.Ui_MainWindow):
+    def __init__(self):
+        super(self.__class__,self).__init__()
+        self.setupUi(self)
+
 def main():
     c = Client('localhost', 5550)
     th1 = threading.Thread(target=c.sendThreadFunc)
@@ -46,4 +54,8 @@ def main():
     t.join()
 
 if __name__ == "__main__":
-    main()
+    #main()
+    app = QApplication(sys.argv)
+    MainWindow = Qt_Window_Main()
+    MainWindow.show()
+    sys.exit(app.exec_())
