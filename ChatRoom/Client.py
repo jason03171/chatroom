@@ -3,8 +3,9 @@ import threading
 import mainwindow
 import sys
 
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QLineEdit, QVBoxLayout, QFormLayout
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QLineEdit, QVBoxLayout, QFormLayout, \
+    QTextBrowser
+from PyQt5.QtCore import QThread, pyqtSignal, Qt
 
 
 class Client:
@@ -14,7 +15,7 @@ class Client:
         self.sock.connect((host, port))
         self.sock.send(b'1')
 
-    def sendNickName(self,NickName):
+    def sendNickName(self, NickName):
         self.sock.send(NickName.encode())
 
     def sendThreadFunc(self, myword):
@@ -76,12 +77,31 @@ class Qt_Window_Main(QMainWindow, mainwindow.Ui_MainWindow):
 
     def onRecvMsg(self, data):
         self.brower.append(data)
+        # 字置左
+        cursor = self.brower.textCursor()
+        blockFormat = cursor.blockFormat()
+        blockFormat.setAlignment(Qt.AlignLeft)
+
+        cursor.mergeBlockFormat(blockFormat)
+        self.brower.setTextCursor(cursor)
+
         self.brower.update()
 
     def sendMsg(self):
         self.c.sendThreadFunc(self.message.text())
-        self.brower.append(self.message.text())
+
+        self.brower.append(self.message.text() + ":You")
+
+        # 字置右
+        cursor = self.brower.textCursor()
+        blockFormat = cursor.blockFormat()
+        blockFormat.setAlignment(Qt.AlignRight)
+
+        cursor.mergeBlockFormat(blockFormat)
+        self.brower.setTextCursor(cursor)
+
         self.brower.update()
+
         self.message.setText("")
 
     def onLogin(self):
@@ -90,9 +110,8 @@ class Qt_Window_Main(QMainWindow, mainwindow.Ui_MainWindow):
         self.login.setEnabled(False)
         self.c.sendNickName(nickname)
 
-        #init ReadMsgThread
+        # init ReadMsgThread
         self._ReadMsgThread.start()
-
 
 
 if __name__ == "__main__":
