@@ -14,13 +14,8 @@ class Client:
         self.sock.connect((host, port))
         self.sock.send(b'1')
 
-        '''
-        #顯示歡迎訊息 向server傳nickname
-        print('Welcome to chat room! ')
-        nickname = input('Input your nickname : ')
-        self.sock.send(nickname.encode())
-        print("Now Lets Chat, ",nickname)
-        '''
+    def sendNickName(self,NickName):
+        self.sock.send(NickName.encode())
 
     def sendThreadFunc(self, myword):
         try:
@@ -43,8 +38,8 @@ class Client:
             print('Server is closed!')
 
 
-class TutorialThread(QThread):
-    getmess = pyqtSignal(int)
+class ReadMsgThread(QThread):
+    getMsg = pyqtSignal(str)
     c = None
 
     def __init__(self, c):
@@ -57,7 +52,8 @@ class TutorialThread(QThread):
     def run(self):
         while True:
             try:
-                self.getmess.update.emit(self.c.recvThreadFunc())
+                msg = self.c.recvThreadFunc()
+                self.getMsg.emit(msg)
             except ConnectionAbortedError:
                 print('Server closed this connection!')
             except ConnectionResetError:
@@ -71,28 +67,32 @@ class Qt_Window_Main(QMainWindow, mainwindow.Ui_MainWindow):
         super(self.__class__, self).__init__()
         self.setupUi(self)
 
-        self._tutorial_thread = TutorialThread(self.c)
-        # self._tutorial_thread.brower.connect(self.settext)
-        self.send.clicked.connect(self.sendmes)
+        self._ReadMsgThread = ReadMsgThread(self.c)
+        self._ReadMsgThread.getMsg.connect(self.onRecvMsg)
 
-        self.send.setText("send")
-        self.send.clicked.connect(self.sendmes)
+        self.send.clicked.connect(self.sendMsg)
 
-    def settext(self, data):
+        self.login.clicked.connect(self.onLogin)
+
+    def onRecvMsg(self, data):
         self.brower.append(data)
         self.brower.update()
 
-    def sendmes(self):
+    def sendMsg(self):
         self.c.sendThreadFunc(self.message.text())
         self.brower.append(self.message.text())
         self.brower.update()
         self.message.setText("")
 
-    def start(self):
-        self._tutorial_thread.start()
+    def onLogin(self):
+        nickname = self.nickname.text()
+        self.nickname.setEnabled(False)
+        self.login.setEnabled(False)
+        self.c.sendNickName(nickname)
 
-    def stop(self):
-        self._tutorial_thread.terminate()
+        #init ReadMsgThread
+        self._ReadMsgThread.start()
+
 
 
 if __name__ == "__main__":
