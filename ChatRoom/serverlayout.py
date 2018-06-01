@@ -17,9 +17,9 @@ class Ui_MainWindow(object):
         self.users = QtWidgets.QTextEdit(self.centralwidget)
         self.users.setGeometry(QtCore.QRect(10, 80, 321, 291))
         self.users.setObjectName("users")
-        self.del = QtWidgets.QPushButton(self.centralwidget)
-        self.del.setGeometry(QtCore.QRect(10, 380, 321, 31))
-        self.del.setObjectName("del")
+        self.delete = QtWidgets.QPushButton(self.centralwidget)
+        self.delete.setGeometry(QtCore.QRect(10, 380, 321, 31))
+        self.delete.setObjectName("del")
         self.add = QtWidgets.QPushButton(self.centralwidget)
         self.add.setGeometry(QtCore.QRect(10, 40, 321, 31))
         self.add.setObjectName("add")
@@ -50,7 +50,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.del.setText(_translate("MainWindow", "Del"))
+        self.delete.setText(_translate("MainWindow", "Del"))
         self.add.setText(_translate("MainWindow", "Add"))
         self.label.setText(_translate("MainWindow", "Nickname"))
         self.label_2.setText(_translate("MainWindow", "Password"))

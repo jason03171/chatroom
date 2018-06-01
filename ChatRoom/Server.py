@@ -2,6 +2,12 @@
 import socket
 import threading
 import datetime
+import serverlayout
+import sys
+
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QLineEdit, QVBoxLayout, QFormLayout, \
+    QTextBrowser
+from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from time import gmtime, strftime
 
 
@@ -118,7 +124,15 @@ def main():
     while True:
         s.checkConnection()
 
+class Qt_Window_Main(QMainWindow, serverlayout.Ui_MainWindow):
+    def __init__(self):
+        super(self.__class__, self).__init__()
+        self.setupUi(self)
+
 
 if __name__ == "__main__":
-    main()
+    app = QApplication(sys.argv)
+    MainWindow = Qt_Window_Main()
 
+    MainWindow.show()
+    sys.exit(app.exec_())
