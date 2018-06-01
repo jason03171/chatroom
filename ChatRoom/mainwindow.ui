@@ -89,7 +89,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="password">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -102,7 +102,7 @@
      <enum>QLineEdit::Password</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="count">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -128,7 +128,7 @@
      <string>變更密碼</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="change">
     <property name="geometry">
      <rect>
       <x>170</x>
@@ -138,7 +138,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="update">
     <property name="geometry">
      <rect>
       <x>360</x>
