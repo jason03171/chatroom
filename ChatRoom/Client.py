@@ -88,6 +88,11 @@ class Qt_Window_Main(QMainWindow, mainwindow.Ui_MainWindow):
         self.brower.update()
 
     def sendMsg(self):
+        # 忽略空字串
+        if self.message.text().isspace() or len(self.message.text()) == 0:
+            self.message.setText("")
+            return
+
         self.c.sendThreadFunc(self.message.text())
 
         self.brower.append(self.message.text() + ":You")
