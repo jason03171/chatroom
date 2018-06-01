@@ -9,7 +9,26 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QLi
     QTextBrowser
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from time import gmtime, strftime
+from pymongo import MongoClient
+from bson.objectid import ObjectId
 
+# 通訊類型
+from enum import Enum, IntEnum, unique
+
+try:
+    @unique
+    class OPERATION(Enum):
+        MSG = "0"
+        NUMCHANGE = "1"
+        #ISALIVE = "2"
+        #CONNECT = "3"
+        CHANGEPWD = "4"
+        #PWDCHANGE = "5"
+        LOGIN = "6"
+except ValueError as e:
+    print(e)
+
+spliteTag = '$@~&*^$'
 
 class Server:
 
@@ -34,7 +53,10 @@ class Server:
                 # start a thread for new connection
 
                 #紀錄使用者名稱
-                nickname = connection.recv(1024).decode()
+                token = connection.recv(1024).decode()
+
+                _ , nickname , password = token.split(spliteTag)
+
                 print(connection.fileno(), '=', nickname)
 
                 self.UserId_Name[connection.fileno()] = nickname
@@ -128,7 +150,22 @@ class Qt_Window_Main(QMainWindow, serverlayout.Ui_MainWindow):
     def __init__(self):
         super(self.__class__, self).__init__()
         self.setupUi(self)
+        self.client = MongoClient('localhost', 27017)
+        self.database = self.client["ChatRoom"]  # SQL: Database Name
+        self.collection = self.database["user"]  # SQL: Table Name
 
+        self.add.clicked.connect(self.adduser)
+
+        self.delete.clicked.connect(self.deleteuser)
+
+    def adduser(self):
+        nickname = self.nickname.text()
+        password = self.password.text()
+
+        self.collection.insert_one({'uname':nickname, 'upwd':password})
+
+    def deleteuser(self):
+        self.collection.delete_one()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
