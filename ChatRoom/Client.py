@@ -7,6 +7,24 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QLi
     QTextBrowser
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 
+# 通訊類型
+from enum import Enum, IntEnum, unique
+
+try:
+    @unique
+    class OPERATION(Enum):
+        MSG = "0"
+        NUMCHANGE = "1"
+        ISALIVE = "2"
+        CONNECT = "3"
+        CHANGEPWD = "4"
+        PWDCHANGE = "5"
+        LOGIN = "6"
+except ValueError as e:
+    print(e)
+
+spliteTag = '$@~&*^$'
+
 
 class Client:
     def __init__(self, host, port):
@@ -15,12 +33,14 @@ class Client:
         self.sock.connect((host, port))
         self.sock.send(b'1')
 
-    def sendNickName(self, NickName):
-        self.sock.send(NickName.encode())
+    def sendNickName(self, NickName, password):
+        token = spliteTag.join([OPERATION.LOGIN, NickName, password])
+        self.sock.send(token.encode())
 
     def sendThreadFunc(self, myword):
         try:
-            self.sock.send(myword.encode())
+            token = spliteTag.join([OPERATION.MSG, myword])
+            self.sock.send(token.encode())
         except ConnectionAbortedError:
             print('Server closed this connection!')
 
@@ -38,6 +58,9 @@ class Client:
         except ConnectionResetError:
             print('Server is closed!')
 
+    def sendNewPassword(self, newPassowrd):
+        token = spliteTag.join([OPERATION.PWDCHANGE, newPassowrd])
+        self.sock.send(token.encode())
 
 class ReadMsgThread(QThread):
     getMsg = pyqtSignal(str)
@@ -75,6 +98,8 @@ class Qt_Window_Main(QMainWindow, mainwindow.Ui_MainWindow):
 
         self.login.clicked.connect(self.onLogin)
 
+        self.update.clicked.connect(self.onUpdatePassword)
+
     def onRecvMsg(self, data):
         self.brower.append(data)
         # 字置左
@@ -111,12 +136,23 @@ class Qt_Window_Main(QMainWindow, mainwindow.Ui_MainWindow):
 
     def onLogin(self):
         nickname = self.nickname.text()
+        password = self.password.text()
+
         self.nickname.setEnabled(False)
+        self.password.setEnabled(False)
         self.login.setEnabled(False)
-        self.c.sendNickName(nickname)
+        self.c.sendNickName(nickname, password)
 
         # init ReadMsgThread
         self._ReadMsgThread.start()
+
+    def onUpdatePassword(self):
+        if self.change.text().isspace() or len(self.change.text()) == 0:
+            self.change.setText("")
+            return
+
+        newPassWord = self.change.text()
+        self.c.sendNewPassword(newPassWord)
 
 
 if __name__ == "__main__":
